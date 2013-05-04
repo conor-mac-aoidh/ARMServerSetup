@@ -9,7 +9,7 @@
 if [ $DISTRO == "ubuntu" ]
 then
 
-	$IP=$(ask "Static IP Address" "192.168.1.99")
+	IP=$(ask "Static IP Address" "192.168.1.99")
 	
 	echo "
 	# This file describes the network interfaces available on your system

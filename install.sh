@@ -26,7 +26,7 @@ echo "" > $LOGFILE
 for file in $DIR/modules/* 
 do
 	read -p "run ${file##*/}? [y/n]: "
-	if [ $REPLY == "y" ]
+	if [ "$REPLY" == "y" ]
 	then
 		# run module
 		. $file

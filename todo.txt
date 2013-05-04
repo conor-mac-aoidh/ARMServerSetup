@@ -1,4 +1,6 @@
 # todo list for setup script
 
+- add not empty option to ask function
 - setup synergy
 - cleanup script that removes all changes to config files and possibly removes packages also
+- perhaps automatic backup to all files edited. this can also be used when the script is run twice
