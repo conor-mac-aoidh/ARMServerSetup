@@ -16,8 +16,8 @@ then
 	NETNAME=$(ask "Network Name (SSID)" "darknet")
 	PASSWD=$(ask "Network Password" "")
 
-	# install bridge utils, dhcp-server, darkstat, hostapd
-	apt-get install bridge-utils dhcp3-server darkstat hostapd
+	# install bridge utils, dhcp-server, saidir, hostapd
+	apt-get install bridge-utils dhcp3-server saidar hostapd
 
 	# configure hostapd
 	echo "DAEMON_CONF=\"/etc/hostapd/hostapd.conf\"" >> /etc/default/hostapd
@@ -97,29 +97,9 @@ bridge_stp off
 #}
 #	" >> /etc/dhcp3/dhcpd.conf
 
-	# configure darkstat
-	echo "
- # Turn this to yes when you have configured the options below.
-START_DARKSTAT=yes
-
-# Don't forget to read the man page.
-
-# You must set this option, else darkstat may not listen to
-# the interface you want
-INTERFACE=\"-i $ETH\"
-
-PORT=\"-p 8888\"
-#BINDIP=\"-b 127.0.0.1\"
-#LOCAL=\"-l 10.1.1.0/24\"
-#FIP=\"-f 127.0.0.1\"
-#DNS=\"-n\"
-#SPY=\"--spy $ETH\"
-	" > /etc/darkstat/init.cfg 
-
 	# restart services
 	/etc/init.d/networking restart
 	/etc/init.d/hostapd restart
-	service darkstat restart
 
 else
 	echo "[ERROR] static ip setup unavailable for distro $DISTRO"
