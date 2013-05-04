@@ -1,0 +1,4 @@
+# todo list for setup script
+
+- setup synergy
+- cleanup script that removes all changes to config files and possibly removes packages also
