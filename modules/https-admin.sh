@@ -35,58 +35,71 @@ server.modules = (
         "mod_redirect",
         "mod_fastcgi",
         "mod_rewrite",
+        "mod_simple_vhost",
+        "mod_accesslog",
         "mod_proxy"
-)
- 
+)                    
+                     
 server.document-root        = "/var/www"
 server.upload-dirs          = ( "/var/cache/lighttpd/uploads" )
 server.errorlog             = "/var/log/lighttpd/error.log"
 server.pid-file             = "/var/run/lighttpd.pid"
 server.username             = "www-data"
 server.groupname            = "www-data"
- 
+                     
 index-file.names            = ( "index.php", "index.html",
                                 "index.htm", "default.htm",
                                " index.lighttpd.html" )
- 
+                     
 fastcgi.server = ( ".php" => ((  
                      "bin-path" => "/usr/bin/php5-cgi",
                      "socket" => "/tmp/php.socket" 
                  ))) 
- 
+                     
 url.access-deny             = ( "~", ".inc" )
- 
+                     
 static-file.exclude-extensions = ( ".php", ".pl", ".fcgi" )
- 
+                     
 ## Use ipv6 if available
 #include_shell "/usr/share/lighttpd/use-ipv6.pl"
- 
+                     
 dir-listing.encoding        = "utf-8"
 server.dir-listing          = "enable"
- 
+                     
 compress.cache-dir          = "/var/cache/lighttpd/compress/"
 compress.filetype           = ( "application/x-javascript", "text/css", "text/html", "text/plain" )
- 
+                     
 include_shell "/usr/share/lighttpd/create-mime.assign.pl"
 include_shell "/usr/share/lighttpd/include-conf-enabled.pl"
 
-# setup https, and proxy for transmission etc 
-\$SERVER["socket"] == "$HOST:443" {
+# setup https   
+\$SERVER["socket"] == "192.168.1.99:443" {
         ssl.engine = "enable"
         ssl.pemfile = "/etc/lighttpd/ssl/$HOST/$HOST.pem"
         ssl.ca-file = "/etc/lighttpd/ssl/$HOST/$HOST.crt"
-        server.name = "$HOST"
-        server.document-root = "/var/www/$HOST"
         server.errorlog = "/var/log/lighttpd/$HOST/serror.log"
         accesslog.filename = "/var/log/lighttpd/$HOST/saccess.log"
 }
- 
- 
-# transmission proxy
-$HTTP["host"] == "transmission.$HOST:443" {
-        proxy.server = ("" => (("host"=>"127.0.0.1","port"=>9091)))
-}
+        
+# setup virtual hosts  
+simple-vhost.server-root = "/var/www/" 
+simple-vhost.default-host = "$HOST" 
+simple-vhost.document-root = "/" 
+        
+# setup proxy to transmission-daemon web interface
+# note: may need to use ip address here rather than host:
+\$HTTP["host"] == "transmission.$HOST:443" {
+        proxy.server = (
+                "" => (
+                        "host" => (
+                                "host" => "127.0.0.1",
+                                "port" => 9091
+                        )
+                )
+        )
+}               
 " > /etc/lighttpd/lighttpd.conf
+
 # setup www, log dirs
 mkdir -p /var/log/lighttpd/$HOST/
 chmod -R 777 /var/log/lighttpd
